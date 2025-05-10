@@ -32,7 +32,7 @@ plt.plot(t[::100], x_t[::100], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("time")
 plt.title("original wave")
-#sd.play(x_t, 3 * 44100 )
+sd.play(x_t, 3 * 44100 )
 plt.show()
 #part 1&2 end here
 
@@ -64,7 +64,7 @@ plt.plot(t[::100], xn_t[::100], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("time")
 plt.title("noisy wave")
-#sd.play(xn_t, 3 * 44100 )
+sd.play(xn_t, 3 * 44100 )
 plt.show()
 
 
@@ -113,8 +113,7 @@ def clean(a,f,w,t):
    
    f1 = int(f[max1_idx])
    f2 = int(f[max2_idx])
-   print(f1)
-   print(f2)
+
    z=np.sin(2 * np.pi * f1 * t) + np.sin(2 * np.pi * f2 * t)
    return (w-z)
 
@@ -126,7 +125,7 @@ plt.plot(t[::100], xclean[::100], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("time")
 plt.title("cleaned wave")
-#sd.play(xclean, 3 * 44100 )
+sd.play(xclean, 3 * 44100 )
 plt.show()
 
 xcleanf=fft(xclean)
