@@ -32,7 +32,7 @@ plt.plot(t[::100], x_t[::100], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("time")
 plt.title("original wave")
-sd.play(x_t, 3 * 44100 )
+#sd.play(x_t, 3 * 44100 )
 plt.show()
 #part 1&2 end here
 
@@ -45,15 +45,17 @@ plt.show()
 
 
 #generating noise
-fn1=np.random.randint(0,512)
-fn2=np.random.randint(0,512)
+
 def n(t):
+   fn1=np.random.randint(0,512)
+   fn2=np.random.randint(0,512)
    n=np.sin(2*np.pi*fn1*t)+np.sin(2*np.pi*fn2*t)
    return n
 
 #generating noisy wave
 n_t = n(t)
 xn_t = x_t + n_t
+
 def xn(t):  # keep this function but no longer used
    return x(t)+n(t)
 
@@ -62,7 +64,7 @@ plt.plot(t[::100], xn_t[::100], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("time")
 plt.title("noisy wave")
-sd.play(xn_t, 3 * 44100 )
+#sd.play(xn_t, 3 * 44100 )
 plt.show()
 
 
@@ -70,7 +72,7 @@ plt.show()
 
 
 N = 3 * 44100
-f = np.linspace(0, 512, int(N/2))
+f = np.linspace(0, 44100/2, int(N/2))
 
 xf=fft(x_t)
 xf = 2/N * np.abs(xf[0:int(N/2)])
@@ -78,14 +80,14 @@ xf = 2/N * np.abs(xf[0:int(N/2)])
 xnf=fft(xn_t)
 xnf = 2/N * np.abs(xnf[0:int(N/2)])
 
-plt.plot(f[::100], xf[::100], linewidth=0.5)
+plt.plot(f[(f>=0)&(f<=512)], xf[(f>=0)&(f<=512)], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("frequency")
 plt.title("original wave fourier")
 plt.show()
 
 
-plt.plot(f[::100], xnf[::100], linewidth=0.5)
+plt.plot(f[(f>=0)&(f<=512)], xnf[(f>=0)&(f<=512)], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("frequency")
 plt.title("noisy wave fourier")
@@ -94,19 +96,43 @@ plt.show()
 
 #cleaning
 
-xclean = xn_t - n_t
+
+   #get the noise
+def clean(a,f,w,t):
+   max=0
+   max2=0
+   max1_idx = 1
+   max2_idx = 1
+   for i in range(len(a)):
+      if a[i] > max:
+        max2 = max
+        max2_idx = max1_idx
+        max = a[i]
+        max1_idx = i
+        
+   
+   f1 = int(f[max1_idx])
+   f2 = int(f[max2_idx])
+   print(f1)
+   print(f2)
+   z=np.sin(2 * np.pi * f1 * t) + np.sin(2 * np.pi * f2 * t)
+   return (w-z)
+
+      
+
+xclean = clean(xnf,f,xn_t,t)  
 
 plt.plot(t[::100], xclean[::100], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("time")
 plt.title("cleaned wave")
-sd.play(xclean, 3 * 44100 )
+#sd.play(xclean, 3 * 44100 )
 plt.show()
 
 xcleanf=fft(xclean)
 xcleanf= 2/N * np.abs(xcleanf[0:int(N/2)])
 
-plt.plot(f[::100], xcleanf[::100], linewidth=0.5)
+plt.plot(f[(f>=0)&(f<=512)], xcleanf[(f>=0)&(f<=512)], linewidth=0.5)
 plt.ylabel("amplitude")
 plt.xlabel("frequency")
 plt.title("cleaned wave fourier")
